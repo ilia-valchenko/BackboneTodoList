@@ -14,3 +14,11 @@
 #todo-list .editing input.edit {
   display: inline;
 }
+
+.nav-bar {
+  list-style-type: none;
+}
+
+.nav-bar ul li {
+  display: inline;
+}

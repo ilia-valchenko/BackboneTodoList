@@ -12,7 +12,17 @@ app.Todo = Backbone.Model.extend({
 
 app.TodoList = Backbone.Collection.extend({
   model: app.Todo,
-  localStorage: new Store("backbone-todo")
+  localStorage: new Store("backbone-todo"),
+  completed: function() {
+    return this.filter(
+      function(todo){
+        return todo.get("completed");
+      }
+    );
+  },
+  pending: function() {
+    return this.without.aply(this, this.completed());
+  }
 });
 
 // Renders individual todo item.
@@ -56,8 +66,7 @@ app.TodoView = Backbone.View.extend({
       this.close();
     }
   },
-  /*Call function from the model*/
-  toggleCompleted: function() {
+  toggleCompleted: function() { // Calls model's function.
     this.model.toggle();
   },
   destroy: function() {
@@ -70,34 +79,48 @@ app.TodoView = Backbone.View.extend({
 app.todoList = new app.TodoList();
 
 // App view
-// Renders full list of todos
+// Renders full list of todos.
 app.AppView = Backbone.View.extend({
   el: "#todoapp",
   initialize: function() {
     this.input = this.$("#new-todo");
     app.todoList.on("add", this.addOne, this);
     app.todoList.on("reset", this.addAll, this);
-    app.todoList.fetch(); // loads all data from local storage
+    app.todoList.fetch(); // loads all data from local storage.
   },
   events: { "keypress #new-todo" : "createTodoOnEnter" },
   createTodoOnEnter: function(e) {
-    // Number 13 is stand for 'Enter'
-    if(e.which !== 13 || !this.input.val().trim()) {
+
+    if(e.which !== 13 || !this.input.val().trim()) { // Number 13 is stand for 'Enter'.
       return;
     }
+
     // It created new todo, but doesn't add it on the web page.
     // That is why I need 'addOne' event.
     app.todoList.create(this.newAttributes());
-    this.input.val(''); // clean input box
+    this.input.val(''); // Clean input box.
   },
   addOne: function(todo) {
     var view = new app.TodoView({model:todo});
     this.$("#todo-list").append(view.render().el);
   },
   addAll: function() {
-    // clean todo list
-    $("todo-list").html('');
-    app.todoList.each(this.addOne, this);
+    $("todo-list").html(''); // Cleans todo list.
+
+    // app.todoList.each(this.addOne, this);
+
+    // Filters todo item list.
+    switch(window.filter) {
+      case 'pending':
+        _.each(app.todoList.remaining(), this.addOne);
+        break;
+      case 'completed':
+        _.each(app.todoList.completed(), this.addOne);
+        break;
+      default:
+        app.todoList.each(this.addOne, this);
+        break;
+    }
   },
   newAttributes: function() {
     return {
@@ -107,4 +130,17 @@ app.AppView = Backbone.View.extend({
   }
 });
 
+app.Router = Backbone.Router.extend({
+  routes: {
+    "*filter" : "setFilter"
+  },
+  setFilter: function(params) {
+    console.log("app.router.params = " + params);
+    window.filter = params.trim() || '';
+    app.todoList.trigger("reset");
+  }
+});
+
+app.router = new app.Router();
+Backbone.history.start();
 app.appView = new app.AppView();
