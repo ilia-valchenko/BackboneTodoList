@@ -1,0 +1,16 @@
+#todo-list {
+  list-style-type: none;
+}
+
+/*Hides the input which edits todo item.*/
+#todo-list input.edit {
+  display: none;
+}
+
+#todo-list .editing label {
+  display: none;
+}
+
+#todo-list .editing input.edit {
+  display: inline;
+}

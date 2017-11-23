@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="description" content="BackboneJS example application">
+		<meta name="author" content="Ilia Valchenko">
+
+		<title>BackboneJS example</title>
+
+		<link href="css/style.css" rel="stylesheet">
+
+		<script src="js/jquery-3.2.1.js"></script>
+		<script src="js/underscore.js"></script>
+		<script src="js/json2.js"></script>
+		<script src="js/backbone.js"></script>
+		<script src="http://cdnjs.cloudflare.com/ajax/libs/backbone-localstorage.js/1.0/backbone.localStorage-min.js"></script>
+	</head>
+	<body>
+		<header>
+			<h3>BackboneJS to-do list app</h3>
+		</header>
+
+		<section id="todoapp">
+			<header id="header">
+				<h1>Todos</h1>
+				<input id="new-todo" placeholder="What needs to be done?">
+			</header>
+			<section id="main">
+				<ul id="todo-list"></ul>
+			</section>
+		</section>
+
+		<script type="text/template" id="item-template">
+    	<div class="view">
+      	<input class="toggle" type="checkbox" <%= completed ? 'checked' : '' %>>
+      	<label><%- title %></label>
+      	<input class="edit" type="text" value="<%- title %>">
+      	<button class="destroy">remove</button>
+    	</div>
+  	</script>
+
+		<script src="js/script.js"></script>
+	</body>
+</html>
